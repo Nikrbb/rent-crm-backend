@@ -7,6 +7,7 @@ const PORT = process.env.PORT || 3000;
 const cors = require('cors');
 
 app.use(cors());
+console.log("DATABASE_URL:", process.env.DATABASE_URL);
 
 app.get('/users', async (req, res) => {
     try {
