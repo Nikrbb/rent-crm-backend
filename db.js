@@ -1,18 +1,10 @@
 // db.js
-const sqlite3 = require("sqlite3").verbose();
-const db = new sqlite3.Database(":memory:"); // база в памяти (можно указать файл)
+const { Pool } = require("pg");
+require("dotenv").config();
 
-// создаем таблицу и тестовые данные
-db.serialize(() => {
-  db.run(`CREATE TABLE users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT
-  )`);
-
-  const stmt = db.prepare("INSERT INTO users (name) VALUES (?)");
-  stmt.run("Alice");
-  stmt.run("Bob");
-  stmt.finalize();
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }, // для Railway
 });
 
-module.exports = db;
+module.exports = pool;
