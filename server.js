@@ -1,23 +1,25 @@
-// server.js
-const express = require('express');
-const db = require('./db');
-
+const express = require("express");
+const cors = require("cors");
 const app = express();
-const PORT = process.env.PORT || 3000;
-const cors = require('cors');
+require("dotenv").config();
+const authRouter = require("./routes/auth");
+const usersRouter = require("./routes/users");
+const spotsRouter = require("./routes/spots");
+const reservationsRouter = require("./routes/reservations");
 
 app.use(cors());
-console.log("DATABASE_URL:", process.env.DATABASE_URL);
+app.use(express.json());
 
-app.get('/users', async (req, res) => {
-    try {
-        const result = await db.query('SELECT * FROM users');
-        res.json(result.rows);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+app.use("/auth", authRouter);
+app.use("/users", usersRouter);
+app.use("/spots", spotsRouter);
+app.use("/reservations", reservationsRouter);
+
+app.get("/", (req, res) => {
+  res.send("🚗 Parking backend работает!");
 });
 
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
