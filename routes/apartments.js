@@ -20,6 +20,26 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
+// получить все квартиры по house_id
+router.get('/house/:houseId', auth, async (req, res) => {
+  const { houseId } = req.params;
+
+  try {
+    const result = await pool.query(
+      `SELECT a.*, h.name AS house_name, h.address AS house_address
+       FROM apartments a
+       LEFT JOIN houses h ON a.house_id = h.id
+       WHERE a.house_id = $1
+       ORDER BY a.id`,
+      [houseId]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
+});
+
 // добавить квартиру
 router.post(
   '/',
